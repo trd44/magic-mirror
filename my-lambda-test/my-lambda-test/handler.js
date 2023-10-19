@@ -4,27 +4,41 @@ require('dotenv').config();
 const { Configuration, OpenAI } = require("openai");
 
 module.exports.callOpenAI = async (event) => {
-  
+
+  const requestBody = JSON.parse(event.body);  // Parse the body from the event
+  const messages = requestBody.messages;       // Extract messages from the parsed body
+
+  console.log(messages);
+
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   });
 
-  const completion = await openai.chat.completions.create({
-    messages: [{ role: "system", content: "You are a helpful assistant." }],
-    model: "gpt-3.5-turbo",
-  });
+  try {
+    const completion = await openai.chat.completions.create({
+      messages: messages,
+      model: "gpt-3.5-turbo",
+    });
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify(
-      {
-        message: completion.choices,
-        input: event,
-      },
-      null,
-      2
-    ),
-  };
+    return {
+      statusCode: 200,
+      body: JSON.stringify(
+        {
+          message: completion,
+          input: event,
+        }, null, 2),
+    };
+  } catch (error) {
+    console.error("Error calling OpenAI: ", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify(
+        {
+          message: error,
+          input: event,
+        }, null, 2),
+    };
+  }
 };
 
 module.exports.hello = async (event) => {

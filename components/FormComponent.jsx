@@ -1,28 +1,39 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text } from 'react-native';
-import OpenAI from 'openai-api';
+import axios from 'axios';
 
 function FormComponent({ startCamera }) {
     const [inputText, setInputText] = useState('');
 
     const handleSubmit = async (event) => {
-        // event.preventDefault();
-        // const response = await fetch('https://api.openai.com/v1/engines/davinci-codex/completions', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Authorization': 'Bearer YOUR_API_KEY_HERE'
-        //     },
-        //     body: JSON.stringify({
-        //         prompt: inputText,
-        //         max_tokens: 60,
-        //         n: 1,
-        //         stop: '\n'
-        //     })
-        // });
-        // const data = await response.json();
-        // console.log(data.choices[0].text);
-        startCamera();
+        event.preventDefault();
+        console.log('inputText', inputText);
+        const response = await axios.post('http://192.168.4.23:3000/callOpenAI', {
+            messages: [
+                { role: "system", content: "You are a magic mirror. The user will tell you something they are feeling insecure about and you will respond with motivational messages to help cheer them up." },
+                { role: "user", content: inputText }
+            ]
+        })
+            .then(response => {
+                const openAIResponse = response.data;
+                console.log(openAIResponse.message);
+
+                startCamera();
+            })
+            .catch(error => {
+                if (error.response) {
+                    // The request was made and the server responded with a status code outside of the range of 2xx
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log(error.request);
+                } else {
+                    // Something happened in setting up the request and triggered an Error
+                    console.log('Error', error.message);
+                }
+            });
     }
 
     return (

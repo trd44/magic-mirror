@@ -67,10 +67,11 @@ functions:
           method: get
   callOpenAI:
     handler: handler.callOpenAI
+    timeout: 10
     events:
       - httpApi:
           path: /callOpenAI
-          method: get
+          method: post
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
@@ -125,3 +126,7 @@ functions:
 
 plugins:
   - serverless-offline
+
+custom:
+  serverless-offline:
+    host: '0.0.0.0' 
