@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text } from 'react-native';
+import OpenAI from 'openai-api';
 
 function FormComponent({ startCamera }) {
     const [inputText, setInputText] = useState('');
