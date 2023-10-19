@@ -5,10 +5,12 @@ import { Camera, CameraType } from 'expo-camera';
 
 import FormComponent from './components/FormComponent';
 import CameraModule from './components/CameraModule';
+import Disclaimer from './components/Disclaimer';
 
 export default function App() {
   const [cameraOn, setCameraOn] = useState(false)
   const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [disclaimerClicked, setDisclaimerClicked] = useState(false)
 
   // Check camera permissions and request permissions if not granted
   useEffect(() => {
@@ -30,8 +32,21 @@ export default function App() {
     })();
   }, []);
 
+  function handleDisclaimer() {
+    console.log('in here')
+    console.log('in here')
+    console.log('in here')
+    setDisclaimerClicked(true)
+  }
+
   return (
     <View style={styles.container}>
+      {!disclaimerClicked && 
+        <View>
+          <Disclaimer/>
+          <Button title="Acknowledge" onPress={handleDisclaimer} />
+        </View>
+      }
       {cameraOn ? (<Camera style={styles.camera} type={CameraType.front} >
         <TouchableOpacity style={styles.button} onPress={() => setCameraOn(false)}>
           <Text style={styles.buttonText}>Return to Form</Text>
